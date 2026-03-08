@@ -4,9 +4,9 @@ string titleApplication = @"
 ░▀▀▀▄▄ █░░ █▄▄▀ █▀▀ █▀▀ █░░█ 　 ░▀▀▀▄▄ █░░█ █░░█ █░░█ █░░█ 
 ▒█▄▄▄█ ▀▀▀ ▀░▀▀ ▀▀▀ ▀▀▀ ▀░░▀ 　 ▒█▄▄▄█ ▀▀▀▀ ░▀▀▀ ▀░░▀ ▀▀▀░";
 
-Dictionary<string, List<int>> registeredBands = new()
+Dictionary<string, List<int>> registeredBands = new(StringComparer.OrdinalIgnoreCase)
 {
-    { "Linkin Park",    [10, 3, 5] },
+    { "Linkin Park",    [10, 9, 8] },
     { "The Beatles",  []         },
     { "Calypso",      [3, 6, 8]  }
 };
@@ -85,7 +85,7 @@ void DisplayMenuOptions()
 
         if (!int.TryParse(Console.ReadLine(), out optionChosen) || optionChosen < 0 || optionChosen > 4)
         {
-            TypeLine("  ⚠  Opção inválida. Digite um número entre 0 e 4.", ConsoleColor.Red, 20);
+            TypeLine("  ⚠  Opção inválida. Digite um número entre 0 e 4.", ConsoleColor.Red, 10);
             optionChosen = -1;
         }
     } while (optionChosen < 0 || optionChosen > 4);
@@ -112,7 +112,7 @@ void HandleMenuOption(int option)
             break;
 
         case 4:
-            Console.WriteLine("4");
+            ShowBandAverage();
             break;
 
         case 0:
@@ -141,7 +141,7 @@ void RegisterBand()
         bandName = Console.ReadLine()!.Trim();
 
         if (string.IsNullOrWhiteSpace(bandName)) 
-            TypeLine("  ⚠  O nome não pode ser vazio. Tente novamente.", ConsoleColor.Red, 20);
+            TypeLine("  ⚠  O nome não pode ser vazio. Tente novamente.", ConsoleColor.Red, 10);
 
     } while (string.IsNullOrWhiteSpace(bandName));
 
@@ -190,14 +190,14 @@ void EvaluateBand()
         bandName = Console.ReadLine()!.Trim();
 
         if (string.IsNullOrWhiteSpace(bandName))
-            TypeLine("  ⚠  O nome não pode ser vazio. Tente novamente.", ConsoleColor.Red, 20);
+            TypeLine("  ⚠  O nome não pode ser vazio. Tente novamente.", ConsoleColor.Red, 10);
 
     } while (string.IsNullOrWhiteSpace(bandName));
 
     if (!registeredBands.ContainsKey(bandName))
     {
         Console.WriteLine();
-        TypeLine($"  ⚠  A banda \"{bandName}\" não foi encontrada.", ConsoleColor.Red, 20);
+        TypeLine($"  ⚠  A banda \"{bandName}\" não foi encontrada.", ConsoleColor.Red, 10);
         ReturnToMenu();
         return;
     }
@@ -209,7 +209,7 @@ void EvaluateBand()
 
         if (!int.TryParse(Console.ReadLine(), out note) || note < 0 || note > 10)
         {
-            TypeLine("  ⚠  Nota inválida. Digite um número entre 0 e 10.", ConsoleColor.Red, 20);
+            TypeLine("  ⚠  Nota inválida. Digite um número entre 0 e 10.", ConsoleColor.Red, 10);
             note = -1;
         }
 
@@ -223,6 +223,54 @@ void EvaluateBand()
     ReturnToMenu();
 }
 #endregion EVALUATE BAND
+
+#region SHOW BAND AVERAGE
+void ShowBandAverage()
+{
+    ShowTitleApplication();
+    ShowSectionHeader("                     MÉDIA DE AVALIAÇÕES");
+
+    string bandName;
+    do
+    {
+        Console.Write("  Nome da banda: ");
+        bandName = Console.ReadLine()!.Trim();
+
+        if (string.IsNullOrWhiteSpace(bandName))
+            TypeLine("  ⚠  O nome não pode ser vazio. Tente novamente.", ConsoleColor.Red, 10);
+
+    } while (string.IsNullOrWhiteSpace(bandName));
+
+    if (!registeredBands.ContainsKey(bandName))
+    {
+        Console.WriteLine();
+        TypeLine($"  ⚠  A banda \"{bandName}\" não foi encontrada.", ConsoleColor.Red, 10);
+        ReturnToMenu();
+        return;
+    }
+
+    List<int> ratings = registeredBands[bandName];
+
+    Console.WriteLine();
+
+    if (ratings.Count == 0)
+    {
+        TypeLine($"  ⚠  \"{bandName}\" ainda não possui avaliações.", ConsoleColor.DarkGray, 20);
+    }
+    else
+    {
+        double average = ratings.Average();
+
+        ConsoleColor averageColor = average >= 7 ? ConsoleColor.Green
+                                    : average >= 4 ? ConsoleColor.Yellow
+                                    : ConsoleColor.Red;
+
+        TypeLine($"  ★  Média de \"{bandName}\": {average:F1} / 10", averageColor, 20);
+    }
+
+    ReturnToMenu();
+}
+#endregion SHOW BAND AVERAGE
 
 #region EXIT APPLICATION 
 void ExitApplication()
