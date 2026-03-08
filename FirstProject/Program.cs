@@ -77,8 +77,18 @@ void DisplayMenuOptions()
     TypeLine("                  [0] Sair", ConsoleColor.Red);
 
     Console.WriteLine();
-    Console.Write("Escolha uma opção: ");
-    int optionChosen = int.Parse(Console.ReadLine()!);
+
+    int optionChosen;
+    do
+    {
+        Console.Write("Escolha uma opção: ");
+
+        if (!int.TryParse(Console.ReadLine(), out optionChosen) || optionChosen < 0 || optionChosen > 4)
+        {
+            TypeLine("  ⚠  Opção inválida. Digite um número entre 0 e 4.", ConsoleColor.Red, 20);
+            optionChosen = -1;
+        }
+    } while (optionChosen < 0 || optionChosen > 4);
 
     HandleMenuOption(optionChosen);
 }
@@ -106,7 +116,7 @@ void HandleMenuOption(int option)
             break;
 
         case 0:
-            PrintColored("Tchau :)", ConsoleColor.DarkYellow);
+            ExitApplication();
             break;
 
         default:
@@ -213,6 +223,30 @@ void EvaluateBand()
     ReturnToMenu();
 }
 #endregion EVALUATE BAND
+
+#region EXIT APPLICATION 
+void ExitApplication()
+{
+    ShowTitleApplication();
+    Console.WriteLine();
+
+    TypeLine("  Obrigado por usar o Screen Sound! 🎵", ConsoleColor.Cyan, 35);
+    TypeLine("  Até a próxima!", ConsoleColor.Yellow, 35);
+    Console.WriteLine();
+
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.Write("  Encerrando");
+    for (int i = 0; i < 3; i++)
+    {
+        Thread.Sleep(500);
+        Console.Write(".");
+    }
+    Console.ResetColor();
+
+    Thread.Sleep(800);
+    Console.Clear();
+}
+#endregion EXIT APPLICATION
 
 
 ShowTitleApplication();
